@@ -1,0 +1,68 @@
+// templates/products.html
+{{define "content"}}
+<form class="product-ordering-form" method="post" action="/basket">
+    {{range .Products}}
+    <div class="product-ordering with-images flex flex-col md:flex-row gap-4 p-4 border-b">
+        <div class="image-column w-full md:w-1/4">
+            {{if .ImageURL}}
+                <img src="{{.ImageURL}}" 
+                     class="preview-image w-full rounded object-cover" 
+                     alt="{{.Name}}">
+            {{else}}
+                <div class="bg-gray-200 w-full h-full rounded flex items-center justify-center">
+                    <span class="text-gray-500">No image available</span>
+                </div>
+            {{end}}
+        </div>
+        
+        <div class="product w-full md:w-3/4">
+            <header class="mb-4">
+                <h2 class="text-xl font-bold">
+                    <a href="/products/{{.ID}}">{{.Name}}</a>
+                </h2>
+            </header>
+
+            <table class="tabular ordering-table w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="p-2 border text-left">
+                            <span class="hidden md:inline">Code</span>
+                            <span class="md:hidden">Item</span>
+                        </th>
+                        <th class="p-2 border text-left">Size</th>
+                        <th class="p-2 border text-left">Grind</th>
+                        <th class="p-2 border text-left">Unit Price</th>
+                        <th class="p-2 border text-left">Qty.</th>
+                        <th class="p-2 border text-left"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Variants}}
+                    <tr>
+                        <td class="p-2 border">
+                            <span class="md:hidden font-bold">{{.Size}}, {{.Grind}}</span>
+                            {{.SKU}}
+                        </td>
+                        <td class="p-2 border align-top">{{.Size}}</td>
+                        <td class="p-2 border align-top">{{.Grind}}</td>
+                        <td class="p-2 border">${{printf "%.2f" .Price}}</td>
+                        <td class="p-2 border">
+                            <input type="number" 
+                                   name="basket[{{.SKU}}]" 
+                                   class="w-16 p-1 border rounded" 
+                                   min="0">
+                        </td>
+                        <td class="p-2 border">
+                            <span class="text-green-600">
+                                {{if .Available}}Available{{else}}Out of Stock{{end}}
+                            </span>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{end}}
+</form>
+{{end}}
