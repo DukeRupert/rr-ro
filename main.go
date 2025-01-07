@@ -44,6 +44,7 @@ func main() {
 
 	// Routes
 	e.GET("/", handlers.HandleProducts)
+	e.POST("/submit-template", handlers.HandleTemplateSubmission)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))

@@ -1,17 +1,61 @@
-// templates/layout.html
 {{define "layout"}}
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function updateCart() {
+            const form = document.getElementById('orderForm');
+            const cartSummary = document.getElementById('cartSummary');
+            const frequencySection = document.getElementById('frequencySection');
+
+            // Get all inputs with quantities
+            const quantities = form.querySelectorAll('input[type="number"]');
+            let hasItems = false;
+
+            // Clear current cart summary
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+
+            // Build cart summary
+            quantities.forEach(input => {
+                if (input.value > 0) {
+                    hasItems = true;
+                    const row = input.closest('tr');
+                    const sku = row.querySelector('.sku').textContent.trim();
+                    const size = row.querySelector('.size').textContent.trim();
+                    const grind = row.querySelector('.grind').textContent.trim();
+                    const price = parseFloat(row.querySelector('.price').textContent.replace('$', ''));
+                    const total = price * parseInt(input.value);
+
+                    const item = document.createElement('div');
+                    item.className = 'mb-2';
+                    item.innerHTML = `
+                        <div class="flex justify-between">
+                            <span>${input.value}x ${size} ${grind}</span>
+                            <span>$${total.toFixed(2)}</span>
+                        </div>
+                    `;
+                    cartItems.appendChild(item);
+                }
+            });
+
+            // Show/hide cart sections based on whether there are items
+            cartSummary.style.display = hasItems ? 'block' : 'none';
+            frequencySection.style.display = hasItems ? 'block' : 'none';
+        }
+    </script>
 </head>
+
 <body class="bg-white">
     <div class="container mx-auto px-4">
         {{template "content" .}}
     </div>
 </body>
+
 </html>
 {{end}}
